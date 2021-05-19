@@ -76,11 +76,12 @@ userSchema.pre(/^find/, function(next) {
   next();
 });
 
+//比對登入時，密碼是否正確
 userSchema.methods.correctPassword = async function(
   candidatePassword,
   userPassword
 ) {
-  return await bcrypt.compare(candidatePassword, userPassword);
+  return await bcrypt.compare(candidatePassword, userPassword); // if match , return true
 };
 
 userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
