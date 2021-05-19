@@ -34,7 +34,7 @@ class APIFeatures {
   limitFields() {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
-      this.query = this.query.select(fileds);
+      this.query = this.query.select(fields);
     } else {
       this.query = this.query.select("-__v"); // 前面加上 - 表示這項拿掉
     }
@@ -45,7 +45,7 @@ class APIFeatures {
     const page = this.queryString.page * 1 || 1; // get page
     const limit = this.queryString.limit * 1 || 100;
     const skip = (page - 1) * limit; //跳過多少筆資料
-    this.query.this.query.skip(skip).limit(limit);
+    this.query.skip(skip).limit(limit);
     //page=3,limit=5, 跳過前面10筆資料，從第11開始，表示第三頁
     return this;
   }

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -22,11 +23,11 @@ const tourSchema = new mongoose.Schema(
     },
     difficulty: {
       type: String,
-      required: [true, "A tour must have a difficulty"]
+      required: [true, "A tour must have a difficulty"],
       enum: {
         values: ["easy", "medium", "difficult"],
         message: "Difficulty is either: easy, medium, difficult"
-      },
+      }
     },
     ratingsAverage: {
       type: Number,
