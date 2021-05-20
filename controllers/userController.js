@@ -87,6 +87,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+// delete user means set active:false, not delete completely
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
