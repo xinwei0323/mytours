@@ -1,9 +1,11 @@
 const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
+
+
 
 const AppError = require("./utils/appError");
-
 const globalErrorHandler = require("./controllers/errorController");
 
 // ROUTE
@@ -13,11 +15,15 @@ const reviewRouter = require("./routes/reviewRoutes");
 
 const app = express();
 
+// template use pug
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // morgan 可以印出每次路徑請求
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
+app.use(cookieParser())
 // Body Parser, reading data from body into req.body
 // 處理 application/json
 app.use(express.json({ limit: "10kb" }));
