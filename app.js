@@ -23,6 +23,8 @@ app.set('views', path.join(__dirname, 'views'));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// access req.cookies.XXXX  
 app.use(cookieParser())
 // Body Parser, reading data from body into req.body
 // 處理 application/json
@@ -36,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   // console.log(req.cookies);
-  // console.log(req.user);
+  // console.log(req.file);
   next();
 });
 
