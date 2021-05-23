@@ -1,8 +1,14 @@
 const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet')
+const multer = require('multer');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const cors = require('cors');
-const cookieParser = require("cookie-parser");
+const cookieParser = require('cookie-parser');
 
 
 
@@ -22,15 +28,32 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+// 1) MIDDLEWARES
+//Set Security HTTP headers
+// app.use(helmet());
+app.use(
+    helmet({
+        contentSecurityPolicy: false,
+    })
+);
+
+// app.use(cors());
+
 // morgan 可以印出每次路徑請求
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
-app.use(cors());
+// Limit requests from same IP
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many request from this IP, please try again in an hour'
+})
+app.use('/api', limiter);
 
-// access req.cookies.XXXX  
-app.use(cookieParser())
+
+
 // Body Parser, reading data from body into req.body
 // 處理 application/json
 app.use(express.json({ limit: "10kb" }));
@@ -38,6 +61,26 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 // Serving static files -> currentPath/public
 app.use(express.static(path.join(__dirname, "public")));
+// access req.cookies.XXXX  
+app.use(cookieParser())
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+//Data sanitization against XSS
+app.use(xss());
+// Prevent parameter pollution
+app.use(
+    hpp({
+        whitelist: [
+            'duration',
+            'ratingsQuantity',
+            'ratingsAverage',
+            'maxGroupSize',
+            'difficulty',
+            'price'
+        ]
+    })
+);
 
 //測試 middleware
 app.use((req, res, next) => {
