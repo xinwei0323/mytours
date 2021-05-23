@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
+const cors = require('cors');
 const cookieParser = require("cookie-parser");
 
 
@@ -12,6 +13,8 @@ const globalErrorHandler = require("./controllers/errorController");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
+const viewRouter = require("./routes/viewRoutes");
+const bookingRouter = require("./routes/bookingRoutes");
 
 const app = express();
 
@@ -21,8 +24,10 @@ app.set('views', path.join(__dirname, 'views'));
 
 // morgan 可以印出每次路徑請求
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+    app.use(morgan("dev"));
 }
+
+app.use(cors());
 
 // access req.cookies.XXXX  
 app.use(cookieParser())
@@ -36,19 +41,21 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //測試 middleware
 app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  // console.log(req.cookies);
-  // console.log(req.file);
-  next();
+    req.requestTime = new Date().toISOString();
+    // console.log(req.cookies);
+    // console.log(req.file);
+    next();
 });
 
+app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/bookings", bookingRouter);
 
 // 出現額外的url時
 app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);
