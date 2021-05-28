@@ -1,6 +1,6 @@
 #Mytours
 
-* 這是一個用 Express,mongodb 實做的全端網站
+* 這是一個用 Express,mongodb 實做的全端網站[https://mytours-allen.herokuapp.com/]
 
 ## 功能
 * 使用者登入驗證與註冊(jwt )
